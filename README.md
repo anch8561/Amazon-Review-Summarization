@@ -1,4 +1,4 @@
-# Amazon-Review-Tag-Generation
+# Tag Generation for Amazon Review
 Course Project for CSCI5622 - Machine Learning
 
 # TEAM MEMBERS
