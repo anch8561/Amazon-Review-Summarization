@@ -14,7 +14,7 @@ from nltk.stem import PorterStemmer
 # In[2]:
 
 
-review  = "It's a sample sentence with random words and bullshit to test if each of the steps work!! Thinking, wondering , writing and watching wayyyyy tooooooo much. am, are, was, were, be, is, A, SFO, I, happpppyyyyy.... youuuu, By the way, I finished the last piece of cake and wrote the first draft without much of a / any trouble. BTW, don't do it, lol, was sleeping, gibberish, add the fairness measure we discussed, contact @ amazon, $50 value, 100%, jack & gill, *lol*, (surprised)"
+review  = "It's a sample sentence with random words to test if each of the steps work!! Thinking, wondering , writing and watching wayyyyy tooooooo much. am, are, was, were, be, is, A, SFO, I, happpppyyyyy.... youuuu, By the way, I finished the last piece of cake and wrote the first draft without much of a / any trouble. BTW, don't do it, lol, was sleeping, gibberish, add the fairness measure we discussed, contact @ amazon, $50 value, 100%, jack & gill, *lol*, (surprised)"
 tokenizer = TweetTokenizer(strip_handles=True, reduce_len=True)
 stop_words = set(stopwords.words('english')) 
 lemmatizer = WordNetLemmatizer()
