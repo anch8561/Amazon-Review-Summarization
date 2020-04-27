@@ -141,48 +141,40 @@ def tokenizeText(sample):
 
 #------------------------------------------------------------------------------
 def return_topics(vectorizer, clf, W, df, n_top_words, n_top_documents):
-    ''' Return topics discovered by a model '''
-
-    # get list of feature names
-    feature_names = vectorizer.get_feature_names()
-
-    # get VADER sentiment analyzer
-    analyser      = SentimentIntensityAnalyzer()
-
-    # list of topics, polarities  and reviews to return
+    print('return topics')
     topics, reviews = [], []
+    features = vectorizer.get_feature_names()
+    sentiment_analyser = SentimentIntensityAnalyzer()
 
-    # loop over all the topics
     for topic_id, topic in enumerate(clf.components_):
-        # print(topic_id,topic)
 
         # grab the list of words describing the topic
-        word_list = []
+        topic_word_list = []
         for i in topic.argsort()[:-n_top_words - 1:-1]:
-            word_list.append(feature_names[i])
+            topic_word_list.append(features[i])
 
-        # split words in case there are some bigrams and get unique set
-        split_list = []
-        for word in word_list:
-            for split in word.split():
-                split_list.append(split)
-        topic_words = list(set(split_list))
+        # split words in case there are some bigrams
+        split_topic_word_list = []
+        for word in topic_word_list:
+            for splitted in word.split():
+                split_topic_word_list.append(splitted)
+        topic_words = list(set(split_topic_word_list))
 
         # append topic words as a single string
         topics.append(' '.join([word for word in topic_words]))
 
-        # loop over reviews for each topic
-        top_doc_indices = np.argsort(W[:, topic_id])[::-1][0:n_top_documents]
-        for doc_index in top_doc_indices:
+        # iterate for reviews for each topic
+        topic_doc_indices = np.argsort(W[:, topic_id])[::-1][0:n_top_documents]
 
-            # check that the review contains one of the topic words
-            review = df['reviewText'].iloc[doc_index]
+        for doc_ind in topic_doc_indices:
+            review = df['reviewText'].iloc[doc_ind]
+
+            # check if the review contains any of the topic words
             if any(word in review.lower() for word in topic_words):
-                # seniment analysis
-                vader = analyser.polarity_scores(review)
-
-                # append current review with seniment and topic id to the list
-                reviews.append(df.iloc[doc_index].to_dict())
+                # analyse sentiment
+                vader = sentiment_analyser.polarity_scores(review)
+                # form the review - topic_id and sentiment data structure
+                reviews.append(df.iloc[doc_ind].to_dict())
                 reviews[-1]['topic'] = topic_id
                 reviews[-1]['sentiment'] = vader['compound']
 
