@@ -195,7 +195,7 @@ def summarize_reviews(topics, reviews):
         summary = []
         sentences = sent_tokenize(review['reviewText'])
         topic_words = topics[review['topic']].split()
-
+        reviews[ii]['topic_words'] = topic_words
         for sentence in sentences:
             for word in topic_words:
                 if word in sentence.lower():
@@ -208,7 +208,7 @@ def summarize_reviews(topics, reviews):
         
         summary_all_review.append(reviews[ii]['summary'])
 
-    return summary_all_review
+    return reviews, summary_all_review
 
 def print_topics(test_asin):
 
@@ -231,8 +231,12 @@ def print_topics(test_asin):
     
     #topic identification
     topics, reviews = return_topics(vectorizer, clf, transform, test_df, n_top_words, n_top_documents)
-    # review summarization
-    summary = summarize_reviews(topics, reviews)
+
+    # review summarization and saving into csv file
+    processed_reviews,summary = summarize_reviews(topics, reviews)
+    processed_reviews_df = pd.DataFrame(processed_reviews)
+    processed_reviews_df.to_csv('%s_reviews.csv' % test_asin, index=False)
+
     print("Summary :\n", summary)
     print("Topics:")
     
@@ -240,6 +244,17 @@ def print_topics(test_asin):
 
 
 # In[4]:
+
+# abhas's testing on video games 5 data set
+reviews_df = getDF('Video_Games_5.json.gz')
+test_asin = '0700026657'
+test_df = reviews_df[reviews_df['asin'] == test_asin]
+print(test_df.head(4))
+topic, review = print_topics(test_asin)
+# output :
+# Summary :
+#  ['great game.', 'great game, I love it and have played it since its arrived', "This game is a bit hard to get the hang of, but when you do it's great.", "I've bought and played ALL of the ANNO games since 1602, and spent more hours than I can even count building massive empires with extremely complex trade routes. People are not as stupid as you think, and will simply find a different game to fill their time with and throw their money at if their freedoms are inhibited by your software. By adding DRM you've actually promoted the use of piracy instead of reduced it, because those that really do want to play it will find a way.", 'I played it a while but it was alright. The more they move these game to steam the more of a hard time I have activating and playing a game. Now I am looking forward to anno 2205 I really want to play my way to the moon.', "i liked a lot some time that i haven't play a wonderfull game very simply and funny game verry good game.", 'found the game a bit too complicated, not what I expected after having played 1602, 1503, and 1701', "This game is a bit hard to get the hang of, but when you do it's great.", 'The more they move these game to steam the more of a hard time I have activating and playing a game.', "4 Stars because they like it and play it often enough so don't feel like money is wasted.", "I liked it and had fun with it, played for a while and got my money's worth.", 'But in spite of that it was fun, I liked it.', "It is so buggy and half-finished that the first campaign doesn't even work properly and the DRM is INCREDIBLY frustrating to deal with. Once you manage to work your way past the massive amounts of bugs and get through the DRM, HOURS later you finally figure out that the game has no real tutorial, so you stuck just clicking around randomly. Sad, sad, sad, example of a game that could have been great but FTW.", 'ok game.', "i liked a lot some time that i haven't play a wonderfull game very simply and funny game verry good game.", "I'm an avid gamer, but Anno 2070 is an INSULT to gaming. Once you manage to work your way past the massive amounts of bugs and get through the DRM, HOURS later you finally figure out that the game has no real tutorial, so you stuck just clicking around randomly. Sad, sad, sad, example of a game that could have been great but FTW."]
+# Topics: ['game great', 'game play time', 'game bite hang', 'waste money like', 'work sad', 'game ok']
 
 
 #reviews_df = getDF('Video_Games_5.json.gz')
