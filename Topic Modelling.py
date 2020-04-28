@@ -289,6 +289,29 @@ print("\n Reviews: \n", review)
 
 # In[ ]:
 
+from sklearn.model_selection import GridSearchCV
+
+ def grid_search_topic_model():
+    search_params = {'n_components': [10, 15, 20, 25, 30], 'learning_decay': [.5, .7, .9], 'n_topics': [3,4,5,6,7,8,9,10,11,12],'n_features' : [500,600,700,800,900,1000,1100,1200,1300,1400,1500]}
+    test_df = reviews_df[reviews_df['asin'] == test_asin].dropna()
+    n_features, n_top_words, n_topics, n_top_documents = 1000, 3, 6, 3
+    vectorizer = TfidfVectorizer(max_features=n_features,
+                                 tokenizer=tokenizeText,
+                                 stop_words='english',
+                                 ngram_range=(1,2))
+
+    clf = NMF(random_state=1, solver='mu', beta_loss='frobenius')
+
+    pipe = Pipeline([('cleanText', CleanTextTransformer()),('vectorizer', vectorizer)])
+
+    pipe.fit(test_df['reviewText'])
+    data_vectorized = pipe.fit_transform(test_df['reviewText'])
+
+    model = GridSearchCV(clf, param_grid=search_params)
+
+    model.fit(data_vectorized)
+    best_topic_model = model.best_estimator_
+    print("Best Model's Params: ", model.best_params_)
 
 
 
