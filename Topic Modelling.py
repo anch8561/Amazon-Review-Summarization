@@ -304,7 +304,7 @@ from sklearn.model_selection import GridSearchCV
 
     pipe = Pipeline([('cleanText', CleanTextTransformer()),('vectorizer', vectorizer)])
 
-    pipe.fit(test_df['reviewText'])
+    # pipe.fit(test_df['reviewText'])
     data_vectorized = pipe.fit_transform(test_df['reviewText'])
 
     model = GridSearchCV(clf, param_grid=search_params)
